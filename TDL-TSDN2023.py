@@ -15,8 +15,8 @@ from sklearn.preprocessing import LabelEncoder
 
 # Function to load your model and tokenizer
 def load_model():
-    model_path = '.\Model\distilbert_model'
-    tokenizer_path = '.\Model\distilbert_tokenizer'
+    model_path = './Model/distilbert_model'
+    tokenizer_path = './Model/distilbert_tokenizer'
     label_encoder_path = '.Model/label_encoder/label_encoder.pkl'
     loaded_tokenizer = DistilBertTokenizer.from_pretrained(tokenizer_path)
     loaded_model = DistilBertModel.from_pretrained(model_path, num_labels=2)
