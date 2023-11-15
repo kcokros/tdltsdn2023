@@ -61,7 +61,7 @@ if st.button('Anonymize Data'):
     if uploaded_file is not None:
         # Apply your anonymization logic here
         # For example:
-        # anonymized_df = df.applymap(hash_condition)
+        anonymized_df = df.applymap(hash_condition)
         # Display anonymized data
         st.dataframe(anonymized_df)
 
