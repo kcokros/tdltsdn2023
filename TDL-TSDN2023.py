@@ -24,6 +24,29 @@ def load_model():
     #loaded_label_encoder = joblib.load(label_encoder_path)
     return loaded_model, loaded_tokenizer
 
+# Custom hashing functions
+def hash_sha256(cell_value):
+    return hashlib.sha256(str(cell_value).encode()).hexdigest()
+
+def hash_md5(cell_value):
+    try:
+        # Check if cell_value meets specific criteria
+        if (isinstance(cell_value, str) and 
+            len(cell_value) == 16 and 
+            11 <= int(cell_value[:2]) <= 95 and
+            1 <= int(cell_value[2:4]) <= 79 and
+            1 <= int(cell_value[4:6]) <= 55 and
+            1 <= int(cell_value[6:8]) <= 71 and
+            1 <= int(cell_value[8:10]) <= 12 and
+            1900 <= int(cell_value[10:12]) <= 2024):
+            # Apply MD5 hashing
+            return hashlib.md5(cell_value.encode()).hexdigest()
+    except ValueError:
+        # If conversion to integer fails, do not hash
+        pass
+    # Return original value if it doesn't meet criteria
+    return cell_value
+
 # Custom hashing function for anonymization
 def hash_condition(cell_value):
     try:
