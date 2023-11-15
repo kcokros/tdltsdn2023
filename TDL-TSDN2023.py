@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import torch
+import hashlib
 import os
 import joblib
 from sklearn.linear_model import LogisticRegression
