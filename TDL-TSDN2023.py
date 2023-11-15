@@ -57,14 +57,46 @@ if uploaded_file is not None:
     else:
         st.error("Unsupported file format. Please provide a CSV or Excel file.")
 
-# Anonymize data
-if st.button('Anonymize Data'):
+    # Transform the data
+    melted_df = df.melt(value_vars=df.columns, var_name='Column', value_name='Data')
+    
+    # Tokenize the data for DistilBert
+    encodings = tokenizer(list(melted_df['Data'].astype(str)), truncation=True, padding=True, max_length=64)
+    input_ids = torch.tensor(encodings['input_ids'])
+    attention_mask = torch.tensor(encodings['attention_mask'])
+    
+    # Predict with DistilBert
+    with torch.no_grad():
+        outputs = distilbert_model(input_ids, attention_mask=attention_mask)
+        distilbert_preds = torch.argmax(outputs.logits, dim=1).numpy()
+    
+    # Apply label encoding to predictions
+    melted_df['Sensitive'] = label_encoder.inverse_transform(distilbert_preds)
+    
+    # Convert the 'Data' column to a list of strings for logistic regression
+    text_data = melted_df['Data'].astype(str).tolist()
+    
+    # Make predictions with logistic regression
+    logistic_preds = logistic_model.predict(text_data)
+    
+    # Add the logistic regression predicted labels to the DataFrame
+    melted_df['Predicted_Sensitive_LR'] = label_encoder.inverse_transform(logistic_preds)
+
+    # Hashing names identified as sensitive
+    melted_df.loc[melted_df['Predicted_Sensitive_LR'] == 1, 'Data'] = melted_df.loc[melted_df['Predicted_Sensitive_LR'] == 1, 'Data'].apply(hash_sha256)
+    
+    # Applying custom MD5 hashing for specific patterns
+    melted_df['Data'] = melted_df['Data'].apply(hash_md5)
+    
+    # Anonymize data
+    if st.button('Anonymize Data'):
     if uploaded_file is not None:
-        # Apply your anonymization logic here
-        # For example:
-        anonymized_df = df.applymap(hash_condition)
-        # Display anonymized data
-        st.dataframe(anonymized_df)
+        # Apply SHA-256 hashing for names identified as sensitive
+        melted_df.loc[melted_df['Predicted_Sensitive_LR'] == 1, 'Data'] = \
+            melted_df.loc[melted_df['Predicted_Sensitive_LR'] == 1, 'Data'].apply(hash_sha256)
+
+        # Apply MD5 hashing for specific numeric patterns
+        melted_df['Data'] = melted_df['Data'].apply(hash_md5)
 
         # Convert DataFrame to CSV for download
         csv = anonymized_df.to_csv(index=False)
