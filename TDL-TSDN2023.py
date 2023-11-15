@@ -18,8 +18,8 @@ def load_model():
     model_path = '.\Model\distilbert_model'
     tokenizer_path = '.\Model\distilbert_tokenizer'
     label_encoder_path = '.Model/label_encoder/label_encoder.pkl'
-    loaded_tokenizer = DistilBertTokenizer.from_pretrained(tokenizer_path, local_files_only=True)
-    loaded_model = DistilBertModel.from_pretrained(model_path, num_labels=2, local_files_only=True)
+    loaded_tokenizer = DistilBertTokenizer.from_pretrained(tokenizer_path)
+    loaded_model = DistilBertModel.from_pretrained(model_path, num_labels=2)
     #loaded_label_encoder = joblib.load(label_encoder_path)
     return loaded_model, loaded_tokenizer
 
