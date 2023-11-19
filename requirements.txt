@@ -9,7 +9,6 @@ transformers
 joblib
 tqdm
 torch
-pprint
 google-generativeai
 beautifulsoup4
 pyvis
