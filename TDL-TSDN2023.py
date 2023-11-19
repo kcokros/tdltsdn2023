@@ -30,6 +30,11 @@ from pyvis.network import Network
 import requests
 from datetime import date
 import plotly.express as px
+
+# Logo
+logo_url = "./PALUGADA.png"
+logo_html = f"<img src='{logo_url}' class='img-fluid'>"
+
 # Function to load your model and tokenizer
 def load_model():
     model_path = './Model/distilbert_model'
@@ -93,7 +98,9 @@ home_page_soup = link_to_soup('https://thehackernews.com/')
 #print(home_page_soup)
 # Load the model (adjust as necessary)
 model, tokenizer = load_model()
+
 #Menu
+st.sidebar.markdown(logo_html, unsafe_allow_html=True)
 menu = st.sidebar.selectbox("Pilih Menu :",("Anonymizer","Cybersec Monitoring","Log Threat Monitoring","Monitoring Berita","Chatbot PDP"))
 
 if menu == "Anonymizer":
